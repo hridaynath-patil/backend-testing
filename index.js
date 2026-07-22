@@ -41,7 +41,7 @@ const limiter = rateLimit({
 });
 
 // ====================================
-// Global Middleware
+// Middleware
 // ====================================
 
 // Parse JSON Body
