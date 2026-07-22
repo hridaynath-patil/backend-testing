@@ -7,7 +7,7 @@ const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const rateLimit = require("express-rate-limit");
 
-const connectDB = require("./config/config/dbdb");
+const connectDB = require("./config/config/db");
 
 // Routes
 const studentRoutes = require("./routes/studentRoutes");
