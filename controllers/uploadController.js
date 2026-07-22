@@ -15,7 +15,7 @@ exports.uploadFile = (req, res) => {
             fileName: req.file.filename,
             mimeType: req.file.mimetype,
             size: req.file.size,
-            path: req.file.path
+            url: `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
         }
     });
 
