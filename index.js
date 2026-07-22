@@ -7,7 +7,7 @@ const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const rateLimit = require("express-rate-limit");
 
-const connectDB = require("./config/config/db");
+const connectDB = require("./config/db");
 
 // Routes
 const studentRoutes = require("./routes/studentRoutes");
@@ -44,23 +44,26 @@ const limiter = rateLimit({
 // Middleware
 // ====================================
 
+// Security Headers
+app.use(helmet());
+
+// Enable CORS
+app.use(cors({
+    origin: process.env.CLIENT_URL || "*",
+    credentials: true
+}));
+
 // Parse JSON Body
 app.use(express.json());
+
+// Parse URL Encoded Data
+app.use(express.urlencoded({ extended: true }));
 
 // Parse Cookies
 app.use(cookieParser());
 
 // HTTP Request Logger
 app.use(morgan("dev"));
-
-// Security Headers
-app.use(helmet());
-
-// Enable CORS
-app.use(cors({
-    origin: process.env.CLIENT_URL,
-    credentials: true
-}));
 
 // Rate Limiting
 app.use(limiter);
@@ -69,12 +72,46 @@ app.use(limiter);
 app.use("/uploads", express.static("uploads"));
 
 // ====================================
+// Default Routes
+// ====================================
+
+// Home Route
+app.get("/", (req, res) => {
+    res.status(200).json({
+        success: true,
+        message: "🚀 Student API is running successfully!",
+        version: "1.0.0"
+    });
+});
+
+// Health Check Route
+app.get("/health", (req, res) => {
+    res.status(200).json({
+        success: true,
+        status: "Healthy",
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString()
+    });
+});
+
+// ====================================
 // API Routes
 // ====================================
 
 app.use("/api", studentRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api", uploadRoutes);
+
+// ====================================
+// 404 Route Handler
+// ====================================
+
+app.use((req, res) => {
+    res.status(404).json({
+        success: false,
+        message: "Route Not Found"
+    });
+});
 
 // ====================================
 // Global Error Handler
